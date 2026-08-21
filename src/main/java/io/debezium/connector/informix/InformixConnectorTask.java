@@ -96,7 +96,7 @@ public class InformixConnectorTask extends BaseSourceTask<InformixPartition, Inf
         final InformixValueConverters valueConverters = new InformixValueConverters(connectorConfig.getDecimalMode(), connectorConfig.getTemporalPrecisionMode(),
                 connectorConfig.binaryHandlingMode());
 
-        Offsets<InformixPartition, InformixOffsetContext> previousOffsets = getPreviousOffsets(new InformixPartition.Provider(connectorConfig),
+        Offsets<InformixPartition, InformixOffsetContext> previousOffsets = getSinglePartitionPreviousOffsets(new InformixPartition.Provider(connectorConfig),
                 new InformixOffsetContext.Loader(connectorConfig));
         // Service providers
         registerServiceProviders(connectorConfig.getServiceRegistry());
@@ -115,9 +115,6 @@ public class InformixConnectorTask extends BaseSourceTask<InformixPartition, Inf
         connectorConfig.getBeanRegistry().add(StandardBeanNames.VALUE_CONVERTER, valueConverters);
         connectorConfig.getBeanRegistry().add(StandardBeanNames.OFFSETS, previousOffsets);
         connectorConfig.getBeanRegistry().add(StandardBeanNames.CDC_SOURCE_TASK_CONTEXT, taskContext);
-
-        final InformixPartition partition = previousOffsets.getTheOnlyPartition();
-        final InformixOffsetContext previousOffset = previousOffsets.getTheOnlyOffset();
 
         final SnapshotterService snapshotterService = connectorConfig.getServiceRegistry().tryGetService(SnapshotterService.class);
 
